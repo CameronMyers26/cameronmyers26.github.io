@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Writings</title>
+  <style>
+    /* Reset some basic elements for better consistency across browsers */
+    body, h1, h2, p, ul, li, nav, section, header, footer {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Overall page styling */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    nav {
+      background-color: #555;
+      display: flex;
+      justify-content: center;
+      padding: 10px 0;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 15px;
+      padding: 8px 12px;
+      transition: background 0.3s;
+    }
+
+    nav a:hover {
+      background-color: #444;
+    }
+
+    /* Main container styling */
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    section h2 {
+      border-bottom: 2px solid #333;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    article {
+      margin-bottom: 20px;
+    }
+
+    article h3 {
+      margin-bottom: 10px;
+    }
+
+    article p {
+      text-align: justify;
+    }
+
+    footer {
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 15px 0;
+    }
+
+    /* Responsive design */
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+      }
+      nav a {
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header Section -->
+  <header>
+    <h1>My Writings</h1>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <!-- The anchor links below correspond to the section IDs -->
+    
+    <a href="#short-stories">Short Stories</a>
+    <a href="#poetry">Poetry</a>
+    <a href="#essays">Non-fiction</a>
+    <!-- Add more categories if needed -->
+  </nav>
+
+  
+    <!-- Main Content Container -->
+  <!-- Short Stories Section -->
+  <div class="container">
+    <section>
+    <h2 align="center">Foreword</h2>
+    <article>
+    <p>I enjoy writing stuff that I think I would want to read, plus it helps me organize my thoughts on things. Hopefully you enjoy reading them, and if you do, let me know. If you don't, also let me know. Or don't, its just for fun. I'll try to keep this site updated with my progress on upcoming drops.</p>
+    </article>
+    </section>
+  <section id="short-stories">
+    <h2>Short Stories</h2>
+    <article>
+      <h3>Reform</h3>
+      <p>The best description I can give is Immersive Allegory. I'll be posting this within the next few weeks.</p>
+    </article>
+    <article>
+        <h3>15</h3>
+        <p>This is actually the first thing I started writing. It still has a lot of issues. I'll be fixing it and putting it up within a year or so (I hope). I guess you could call it a story about obsession.</p>
+      </article>
+      <article>
+        <h3>Untitled</h3>
+        <p>I have many pages of notes, and almost a full outline of the story. It will probably take a few years to finish. Maybe you could call it a love story (or lack thereof).</p>
+      </article>
+      <article>
+        <h3>Untitled</h3>
+        <p>I'm currently outlining a kind of two part horror/fantasy kind of thing. It probably wont be done for a long time.</p>
+      </article>
+    <!-- More short stories can be added here -->
+  </section>
+
+  
+    <!-- Poetry Section -->
+    <section id="poetry">
+      <h2>Poetry</h2>
+      <article>
+        <h3>The Miracle of Love Trilogy</h3>
+        <p>I'm really bad at writing poetry, but this one is probably the best I may ever do. I'll post it as soon as I stop feeling embarassed about it.</p>
+      </article>
+    </section>
+
+    
+
+    <!-- Essays Section -->
+    <section id="essays">
+      <h2>Non-fiction</h2>
+      <article>
+        <a href="assets/Quantum_Cryptography.pdf"><h3> Quantum Heists and the Future of Digital Privacy</h3> </a>
+        <p>I had to write a paper about quantum cryptography that I made for a more casual audience. So normal people may enjoy reading it. Its basically about quantum computers stealing your information.</p>
+      </article>
+      <!-- Additional essays can be added here -->
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy;2025 Cameron Myers</p>
+  </footer>
+</body>
+</html>
