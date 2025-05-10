@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        .artist {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #ddd;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .artist:hover {
+            background-color: #ccc;
+        }
+        .albums, .album-info {
+            display: none;
+            margin-left: 20px;
+            padding: 5px;
+            background-color: #eee;
+            border-left: 3px solid #888;
+        }
+        .album {
+            cursor: pointer;
+            padding: 5px;
+            background-color: #ccc;
+            border-radius: 3px;
+            margin-top: 5px;
+            transition: background 0.3s;
+        }
+        .album:hover {
+            background-color: #bbb;
+        }
+        .description {
+            padding: 5px;
+            margin-top: 5px;
+            background-color: #ddd;
+            border-radius: 3px;
+        }
+        .visible {
+            display: block;
+        }
+        p {
+            text-align : center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Music</h1>
+<p>Click on an artist to see their albums and descriptions.<br>Artists are in alphabetical order, but I list the albums in order of my most liked to least liked. These are subject to change but if I'm really familiar with an artist I'll put a star next to their name. I also may not include a description for every one of these. </p>
+
+<div id="artist-list"></div>
+
+<script>
+    // Sample artist, album, and description data
+    const artists = {
+        "Animal Collective": { albums: ["Strawberry Jam (2007)", "Isn't it now? (2023)", "feels (2005)", "Sung Tongs (2004)", "Painting With (2016)", "Merriweather Post Pavilion", "Time Skiffs (2022)"], descriptions: ["A lot of these are probably interchangeable but Strawberry Jam is probably my favorite. It's amazing", "Lots of amazing tracks and Stride Rite is so beautiful", "The bees, the bees, the bees rheerheewhoarwhoo"] },
+        "Aurora": { albums: ["Running with the Wolves (2015)"], descriptions: ["Pretty album"] },
+        "A Perfect Circle": { albums: ["Thirteenth Step (2003)", "Mer De Noms (2000)", "eMOTIVe (2004)", "Eat The Elephant (2018)"], descriptions: ["Both of these albums are amazing, I put this one first because it has a wider range of sounds.", "Dark, beautiful, vulnerable. Yes.", "I think I need to relisten to these last two albums. I don't rememeber them well."] },
+        "Black Midi*": { albums: ["Cavalcade (2021)", "Schlagenheim (2019)", "Hellfire (2022)"], descriptions: ["Top 5 album of all time for me. I love everything about this.", "Honestly all three of these albums are super close. This one is their weirdest but in some ways it makes it their rawest.", "PLEASE GET BACK TOGETHER AND MAKE ANOTHER ALBUM, ahem I like the storytelling aspect of this album a lot."] },
+        "Blonde Redhead": { albums: ["Misery is a Butterfly (2004)", "Melody of Certain Damaged Lemons (2000)", "Fake Can Be Just as Good (1997)", "Sit Down for Dinner (2023)", "23 (2007)", "Blonde Redhead (1995)", "Barragan (2017)"], descriptions: ["I love this anaolgy and every track feels very raw but well put together. Big fan of this album.", "Another Blonde Redhead banger.", "Its kind of hard to rank their albums with how much their sound changed. Bipolar is sick and everything about this album is sick.", "Some genuine amazing tracks on here. A lot of these top 4 are pretty interhangeable tbh.", "", "This album is incredibly mid unfortunately."] },
+        "Daughters*": { albums: ["You Won't Get What You Want (2018)", "Daughters (2010)", "Hell Songs (2006)", "Canada Songs (2003)"], descriptions: ["This will never not be one of my favorite albums of all time. Common through-line for all daughters albums: How is he making those sounds with a guitar? Dark, dissonant, dirty, but its all tied together so gracefully. Maybe the sun waits for you to be shown what to do.", "This album is also very good", "It bears repeating: How is he making those sounds with a guitar?", "Its okay"] },
+        "Idles*": { albums: ["Joy as an Act of Resistance. (2018)", "CRAWLER (2021)", "Brutalism (2017)", "TANGK (2024)", "Ultra Mono (2020)"], descriptions: ["These three are all very close, but this one is just too iconic. Every song is a banger and the themes explored are meaningful. And now I know to never fight a man with a perm.", "I'm a CRAWLER defender. I like this album a lot.", "I like this Idles sound when they are at their grimiest. Brutalism is a fitting title.", "This is a very solid album.", "I want to like this but it's just not great"] },
+        "Porcupine Tree*": { albums: ["Fear of a Blank Planet + Nil Recurring (2007)", "Deadwing (2005)", "Signify (1996)", "In Absentia (2002)", "The Incident (2009)", "The Sky Moves Sideways (1995)", "CLOSURE / CONTINUATION (2022)", "Recordings (2001)", "Stupid Dream (1999)", "Lightbulb Sun (2000)", "Voyage 34", "Metanoia (1998)", "Staircase Infinities (1994)", "Up the Downstair (1993)", "On the Sunday of Life (1991)" ], descriptions: ["For the sake of my sanity I am not including any compilation or live albums BUT I COULD. The compromise since I can't put Anesthetize here would be to lump these two together, but honestly they should go together anyways. Peak", "I want to be clear, I love all these albums and I could really put them in any order but gun to my head, this is the order I'll stick with. I love the yin-yang almost dynamic on the pacing of this album and the story as well.", "Realistically, most people would say this should be lower, but I love this album. Its like losing your mind and then being able to tune back in to some great tracks. What an experience.", "Honestly if I included chloroform, drown with me, and futile from the deluxe version, I could be happy putting this above Signify. Another amazing album.", "I'M AN INCIDENT SUPPORTER yes I love this album despite its flaws. It definitely has some weak tracks but it also has a lot of peak songs on it.", "The sky be moving sideways. There's a lot to like about this album what else can I say", "Man I love a lot of the tracks on this, but it can leave me feeling like somethings missing. Still amazing though.", "Same as C/C really.", "Ever wonder what it is like to have a stupid dream?", "Russia on Ice is still one of their best songs. Great album too", "Thoroughly voyaged", "Maybe this is carried by my love of signify but I like this album still. This is probably the cut off, everything above this is not interchangeble with this or any below it.", "Honestly you could lump the staircase albums together, they are both pretty good.", "","This album is okay, its not bad." ] },
+        "Viagra Boys": { albums: ["Cave World (2022)", "viagr aboys (2025)", "Welfare Jazz (2021)", "Street Worms (2018)"], descriptions: ["Possibly top 5, definitely top 10 albums of all time. Especially inluding the deluxe tracks", "If you're a man made of meat, you'll probably like this too.", "Apt title", "also apt title, viagra boys are pretty on the nose with these titles."] },
+        "Crystal Castles": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Aphex Twin": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "MF Doom/Madvillain": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "American Football": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Air": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Everything Everything": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Sprain": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Glass Beach": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Feeble little horse": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Lemon Twigs": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Jean Dawson": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Just a Gent": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Genesis Owusu": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Failure": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Liturgy": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Jarboe": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Jeff Rosenstock": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Fever Ray": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Black Ghosts": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "MISSIO": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Yves Tumor": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "MGMT": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Bedia": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Wednesday": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Underscores": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Sleep Token": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Boygenious": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Tyler Childers": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Thundercat": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Metallica": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Kelela": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Caroline Polachek": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Rex Orange County": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Coldplay": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Still Woozy": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Silk Sonic": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Spirit of the Beehive": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Avalanches": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Killers": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Glass Animals": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Opeth": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Pearl Jam": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Cola": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Andrew Bird": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Cindy Lee": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Boy Harsher": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Havok": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Honeyglaze": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Remi Wolf": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Clairo": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Mitski": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Billie Eilish": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Nation of Language": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Cuco": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Pink Floyd": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Billy woods": { albums: ["Maps", "", ""], descriptions: ["", "", ""] },
+        "Protomartyr": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Death's Dynamic Shroud": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Black Country, New Road": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Steven Wilson": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Arctic Monkeys": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Spellling": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Ugly (UK)": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Current 93": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Inhaler": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Hesse Kassel": { albums: ["La Brea (2025)"], descriptions: ["A bit derivative in some ways but MAN IS THIS ALBUM GOOD"] },
+        "Tapir!": { albums: ["The Pilgrim, Their God and The King of My Decrepit Mountain"], descriptions: [""] },
+        "YHWH Nailgun": { albums: [""], descriptions: [""] },
+        "Font": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Street Sects*": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Squid*": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Queens of the Stone Age": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "R.A.P Ferreira": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Tyler the Creator*": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Swans": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Model/actriz": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Massive Attack": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Deftones": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Tool": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Foo Fighters": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Nirvana": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Nine Inch Nails": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Hole": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Alice In Chains": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Paramore": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Led Zeppelin": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Doors": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Cure": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Michael Gira": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Angels of Light": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Lingua Ignota": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Reverend Kristin Michael Hayter": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Cocteau Twins": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Tame Impala": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Beach House": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Mac DeMarco": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "King Krule": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Neurosis": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Infected Mushroom": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Brakence": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Death Grips": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Death Cab for Cutie": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Oh Sees": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Violent Femmes": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Machine Girl": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Joy Division": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Butthole Surfers": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Deerhunter": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Chelsea Wolfe": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Mac Miller": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Ethel Cain": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Beabadoobee": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "KNOWER": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Clown Core": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Porter Robinson": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Twenty One Pilots": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Vampire Weekend": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Olivia Rodrigo": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Kacey Musgraves": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Palace": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Mustard Service": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Father John Misty": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Lana Del Rey": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Tropical Fuck Storm": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Psychedelic Porn Crumpets": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Xiu Xiu": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Slint": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Godspeed You! Black Emperor": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Geordie Greep": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Puma Blue": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Radiohead": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Smile": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Kikagaku Moyo": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Fiona Apple": { albums: ["When the pawn hits the conflicts he thinks like a king What he knows throws the blows when he goes to the fight And he'll win the whole thing 'fore he enters the ring There's no body to batter when your mind is your might So when you go solo, you hold your own hand And remember that depth is the greatest of heights And if you know where you stand, then you know where to land And if you fall it won't matter, cuz you'll know that you're right", "The Idler Wheel Is Wiser Than the Driver of the Screw and Whipping Cords Will Serve You More Than Ropes Will Ever Do", "Fetch the Bolt Cutters"], descriptions: ["Yes I put the whole title, no I do not apologize. This album is genuinely one of the best things ever written.", "This one is also amazing.", "Its almost like the quality of the album is directly proportional to the number of words in the title... I must listen to the rest of her albums to test this hypothesis."] },
+        "Lightning Bolt": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Hiatus Koyote": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Innerwave": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Rain on Fridays": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Gumby's Junk": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Moonwave": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Car Seat Headrest": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Neutral Milk Hotel": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Kali Uchis": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Primus": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Contortionist": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Turnstile": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Strokes": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Chat Pile": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Jockstrap": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Headache": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Cameron Winter": { albums: ["Heavy Metal", "", ""], descriptions: ["", "", ""] },
+        "Geese": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Orchestra (For Now)": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Sorry": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "King Gizzard & The Lizard Wizard": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Cake": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Steve Lacy": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Ben Folds Five": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Gorillaz": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Weezer": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Incubus": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Interpol": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Black Keys": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Red Hot Chili Peppers": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Sublime": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Muse": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Stone Temple Pilots": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Linkin Park": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Jane's Addiction": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Frank Ocean": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Eminem": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Hozier": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Childish Gambino": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Jaguares": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Riverside": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Kendrick Lamar": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Charli XCX": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Chappell Roan": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Puscifer": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Soundgarden": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Highly Suspect": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "No Knife": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Smiths": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Seven": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Pineapple Thief": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Ace Aura": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "The Horrors": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "King Crimson": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Have a Nice Life": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Omni": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Yard Act": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Maruja": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Virtual Riot": { albums: ["", "", ""], descriptions: ["", "", ""] },
+        "Pink Navel": { albums: ["How To Capture Playful", "", ""], descriptions: ["", "", ""] },
+        "Crumb": { albums: ["AMANA (2024)", "Jinx (2019)", "Ice Melt (2021)"], descriptions: ["Takes everything good from their previous albums and makes one banger album.", "Immaculate vibes. Very captivating but in a strange way.", "This album improved on the sounds from Jinx but just wasn't as captivating for me. Still a good album for sure."] },
+        "The Mars Volta": { albums: ["Frances the Mute (2005)", "De-Loused in the Comatorium (2003)", "Noctourniquet (2012)", "The Bedlam in Goliath (2008)", "The Mars Volta (2022)", "Luvro sucio; Los ojos del vacio (2025)"], descriptions: ["This album is a genuine masterpiece. Very engaging story.", "Just look at this title and tell me this album doesn't sound cool.", "I think this is a very underrated album. There are some amazing tracks on here. It could be my second favorite album of their honestly.","This album and the next are also pretty solid.", "its not bad"] }
+
+
+        //"": { albums: ["", "", ""], descriptions: ["", "", ""] },
+    };
+
+    const artistList = document.getElementById("artist-list");
+
+    // Sort artists alphabetically
+    const sortedArtists = Object.keys(artists).sort();
+
+    sortedArtists.forEach(artist => {
+        let artistDiv = document.createElement("div");
+        artistDiv.className = "artist";
+        artistDiv.textContent = artist;
+
+        let albumsDiv = document.createElement("div");
+        albumsDiv.className = "albums";
+
+        artists[artist].albums.forEach((album, index) => {
+            let albumDiv = document.createElement("div");
+            albumDiv.className = "album";
+            albumDiv.textContent = album;
+
+            let albumInfoDiv = document.createElement("div");
+            albumInfoDiv.className = "album-info";
+
+            let descriptionPara = document.createElement("p");
+            descriptionPara.className = "description";
+            descriptionPara.textContent = artists[artist].descriptions[index];
+
+            albumDiv.addEventListener("click", (event) => {
+                event.stopPropagation(); // Prevent artist-level toggling from interfering
+                albumInfoDiv.classList.toggle("visible");
+            });
+
+
+
+            albumInfoDiv.appendChild(descriptionPara);
+            albumsDiv.appendChild(albumDiv);
+            albumsDiv.appendChild(albumInfoDiv);
+        });
+
+        artistDiv.addEventListener("click", () => {
+            albumsDiv.classList.toggle("visible");
+        });
+
+
+        artistList.appendChild(artistDiv);
+        artistList.appendChild(albumsDiv);
+    });
+</script>
+
+</body>
+</html>
+
