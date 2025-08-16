@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rose</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; background: #0f0b0b; color: #f4cfdc; }
+
+    :root {
+      --accent: #7f0707;
+      --ink: #f89191;
+      --veil: rgba(60, 8, 18, .58);
+      --vignette: rgba(32, 2, 17, 0.65);
+      --paper: #f6f2ec;
+      --bg-url: url("images/rosebg.png");
+    }
+
+    article {
+        text-align: center;
+    }
+    
+    /*.line {
+        text-align: center;
+        
+    }*/
+
+    .stage {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .bg-image {
+      position: absolute; inset: 0;
+      background-image: var(--bg-url);
+      background-size: cover; background-position: center;
+      filter: saturate(1.05) contrast(1.02) brightness(.9);
+      transform: translateZ(0);
+    }
+
+    .bg-gradient {
+      position: absolute; inset: 0;
+      background: radial-gradient(120% 80% at 50% 20%, transparent 0 40%, var(--vignette) 90%),
+                  linear-gradient(180deg, var(--veil), rgba(11, 0, 0, 0.26)); 
+      pointer-events: none;
+    }
+
+    .bg-texture {
+      position: absolute; inset: 0;
+      mix-blend-mode: overlay;
+      opacity: .22;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/ filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+      background-size: 320px 320px;
+      pointer-events: none;
+    }
+
+    .shell {
+      position: relative; z-index: 1;
+      width: min(92vw, 760px);
+      margin: 6vh auto;
+      padding: clamp(1.25rem, 2.5vw, 2rem) clamp(1.1rem, 2.5vw, 2rem);
+      backdrop-filter: blur(2px);
+      background: color-mix(in oklab, var(--veil) 60%, transparent);
+      border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent);
+      border-radius: 22px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+    }
+
+    .title {
+      font-size: clamp(2rem, 4.8vw, 3rem);
+      line-height: 1.1;
+      letter-spacing: .02em;
+      margin: 0 0 .5rem;
+      display: inline-flex; align-items: center; gap: .6rem;
+    }
+    .title svg { width: 1.25em; height: 1.25em; opacity: .9; }
+
+    .subtitle { margin: 0 0 1.5rem; font-size: 0.95rem; opacity: .8; letter-spacing: .06em; text-transform: uppercase; }
+
+    .poem { font-size: clamp(1.05rem, 2.1vw, 1.25rem); line-height: 1.8; }
+    .poem .line { opacity: 0; transform: translateY(8px); animation: rise .9s ease-out forwards; }
+    .poem .line + .line { margin-top: .10em; }
+    .poem .stanza { margin: 1.2em 0 1.4em; }
+
+    .poem .line:nth-child(1)  { animation-delay: 0.05s }
+    .poem .line:nth-child(2)  { animation-delay: 0.15s }
+    .poem .line:nth-child(3)  { animation-delay: 0.25s }
+    .poem .line:nth-child(4)  { animation-delay: 0.35s }
+    .poem .line:nth-child(5)  { animation-delay: 0.45s }
+    .poem .line:nth-child(6)  { animation-delay: 0.55s }
+    .poem .line:nth-child(7)  { animation-delay: 0.65s }
+    .poem .line:nth-child(8)  { animation-delay: 0.75s }
+    .poem .line:nth-child(9)  { animation-delay: 0.85s }
+    .poem .line:nth-child(10) { animation-delay: 0.95s }
+
+    @keyframes rise { to { opacity: 1; transform: translateY(0) } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .poem .line { opacity: 1; transform: none; animation: none; }
+      .shell { backdrop-filter: none; }
+    }
+
+    .credit { position: fixed; left: 12px; bottom: 12px; opacity: .7; font-size: .75rem; }
+    .credit a { color: var(--accent); }
+
+    .nav { position: fixed; left: 12px; top: 12px; right: 12px; z-index: 3; display: flex; justify-content: right; align-items: center; gap: .75rem; }
+    .pill { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .8rem; border-radius: 999px; text-decoration: none; color: var(--ink); background: color-mix(in oklab, var(--veil) 75%, transparent); border: 1px solid color-mix(in oklab, var(--ink) 15%, transparent); backdrop-filter: blur(2px); font: 600 0.85rem ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .pill:hover { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .credit { position: fixed; left: 12px; bottom: 12px; opacity: .7; font-size: .75rem; }
+    .credit a { color: var(--accent); }
+  </style>
+</head>
+<body data-theme="crimson">
+     <nav class="nav" aria-label="Poem navigation">
+    <!-- Replace href values with your actual URLs (e.g., /poems/rose.html and /poems/bud.html) -->
+    <!--<a class="pill" href="rose.html" rel="prev" aria-label="Go to previous poem: Rose">⟵ Rose</a>-->
+    <a class="pill" href="Thorn.html" rel="next" aria-label="Go to next poem">Thorn ⟶</a>
+  </nav>
+  <main class="stage" aria-label="Poem background stage">
+    <div class="bg-image" aria-hidden="true"></div>
+    <div class="bg-gradient" aria-hidden="true"></div>
+    <div class="bg-texture" aria-hidden="true"></div>
+
+    <article class="shell" role="article" aria-label="Poem: Rose">
+      <h1 class="title" aria-label="Title: Rose">
+        <!--<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 2c2.21 0 4 .79 4 2.5S14.21 7 12 7 8 6.21 8 4.5 9.79 2 12 2zm6.5 6.5c0 3.04-2.46 5.5-5.5 5.5S7.5 11.54 7.5 8.5a6.5 6.5 0 1 1 11 0zM6 14c0-1.1.9-2 2-2h8a2 2 0 1 1 0 4H8a2 2 0 0 1-2-2zm4 3h4c2.21 0 4 1.79 4 4H6c0-2.21 1.79-4 4-4z"/></svg>-->
+        Rose
+      </h1>
+      <p class="subtitle">Miracle of Love Pt.1</p>
+      <div class="poem" aria-label="Poem body">
+        <div class="stanza">
+            <div class="line">Time hangs in suspension</div>
+            <div class="line">While our hearts connect</div>
+            <div class="line">And faith in that bond ensures</div>
+            <div class="line">Even in a world of ruin</div>
+            <div class="line">A beautiful moment will bloom</div>
+            <div class="line">And space waits in abeyance</div>
+            <div class="line">Until moments burn into monuments</div>
+            <div class="line">Every struggle is just a hiccup</div>
+            <div class="line">In the face of forever and always</div>
+            <div class="line">Unconditional love across vast distance</div>
+            <div class="line">And in a land of a million homes</div>
+            <div class="line">I have found mine</div>
+        </div>
+        <div class="stanza">
+            <div class="line">Laid like a somniferous film across my bed</div>
+            <div class="line">My fingers trace images they were led to uncover</div>
+            <div class="line">The pain that lies within those impressions</div>
+            <div class="line">Are annihilated by the engravings on mine</div>
+            <div class="line">And all the secrets you reveal through translucent skin</div>
+            <div class="line">Are safeguarded by my transparent love </div>
+            <div class="line">The veil of delirium falls gracefully</div>
+            <div class="line">As you lay by my side, dreaming in peace</div>
+            <div class="line">Naked, transposed, wound like a rose </div>
+            <div class="line">The object of all my desire</div>
+            <div class="line">And you are mine</div>
+        </div>
+        <div class="stanza">
+            <div class="line">We emit an incandescent light</div>
+            <div class="line">Upon which our prismatic soul splits</div>
+            <div class="line">Refracted into a variegated illumination</div>
+            <div class="line">And giving us an invincible glow</div>
+            <div class="line">Like dancing on the surface of the sun</div>
+            <div class="line">While the unseen struggles lay </div>
+            <div class="line">In the impermeable silhouette</div>
+            <div class="line">Meaningless disfigured shadows</div>
+            <div class="line">In the wake of an untouchable bond</div>
+            <div class="line">Is sure evidence towards The Miracle of Love</div>
+      </div>
+    </article>
+  </main>
+</body>
+</html>
