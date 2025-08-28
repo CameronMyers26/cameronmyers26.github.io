@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hawking Radiation: Evaporation Timeline</title>
+  <style>
+    :root { --bg:#0d1224; --panel:#141a2e; --ink:#e8ecff; --muted:#98a2ff; --accent:#6ee7ff; --accent2:#a78bfa; --warn:#f59e0b; }
+    
+    html, body {
+    min-height: 100%;
+    margin: 0;
+    background: radial-gradient(1200px 800px at 20% -10%, #1b2448, var(--bg)) fixed;
+    background-color: var(--panel);
+    color: var(--ink);
+    }
+    
+    body { margin:0; font:16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;}
+    .wrap { max-width:980px; margin:32px auto; padding:0 16px; }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.35); }
+    .card > * { padding:20px; }
+    h1 { font-weight:700; letter-spacing:.3px; margin:0; font-size: clamp(22px, 2.5vw, 34px); }
+    h2 { font-weight:650; letter-spacing:.2px; margin:0; font-size: clamp(18px, 2vw, 22px); color: var(--muted); }
+    .grid { display:grid; gap:16px; grid-template-columns: repeat(12, 1fr); }
+    .span-6 { grid-column: span 6; }
+    .span-12 { grid-column: 1 / -1; }
+    label { display: block; font-size:13px; opacity:.9; margin-bottom:6px; }
+    input, select { width:100%; background:#0f1430; color:var(--ink); border:1px solid rgba(255,255,255,.14); border-radius:12px; padding:12px 5px; outline:none; }
+    input:focus, select:focus { border-color:var(--accent); box-shadow:0 0 0 4px rgba(110,231,255,.15); }
+    button { background:linear-gradient(135deg, var(--accent), var(--accent2)); color:#0b0f1f; border:none; border-radius:14px; padding:12px 18px; font-weight:700; cursor:pointer; }
+    button[disabled] { opacity:.6; cursor:not-allowed; }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .pill { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); padding:4px 10px; border-radius:999px; font-size:12px; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.08); vertical-align:top; }
+    th { text-align:left; color:var(--muted); font-weight:600; }
+    .foot { font-size:12px; opacity:.8; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .status { font-size:13px; color: var(--warn); }
+    hr { border:none; border-top:1px solid rgba(255,255,255,.15); margin:20px 0; }
+    .options { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+    .control { min-width:125px; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div>
+        <h1>Hawking Radiation – Evaporation Timeline</h1>
+        <p>Compute the Hawking temperature and evaporation timeline. Runs in your browser with Python via Pyodide (and a JS fallback).</p>
+      </div>
+
+      <div class="grid span-12">
+        <div class="span-6">
+            <label for="inputType">Input Type</label>
+            <select id="inputType">
+            <option value="mass" selected>Mass</option>
+            <option value="radius">Radius</option>
+            </select>
+        </div>
+        <div class="span-6"></div>
+        <div class="span-6" id="massRow">
+            <label for="mass">Black Hole Mass</label>
+            <input id="mass" type="number" step="any" placeholder="10" value="10" />
+        </div>
+        <div class="span-6" id="massUnitsRow">
+            <label for="units">Input Units</label>
+            <select id="units">
+            <option value="Msun" selected>Solar masses (M☉)</option>
+            <option value="Mearth">Earth masses (M⊕)</option>
+            <option value="kg">Kilograms (kg)</option>
+            <option value="lb">Pounds (lb)</option>
+            <option value="tonUS">US tons (short ton)</option>
+            <option value="tonne">Metric tons (tonne)</option>
+            <option value="primordial">Primordial-scale (×10^11 kg)</option>
+            </select>
+        </div>
+        <div class="span-6 hidden" id="radiusRow">
+            <label for="radius">Black Hole Radius</label>
+            <input id="radius" type="number" step="any" placeholder="29.530" value="29.530" />
+        </div>
+        <div class="span-6 hidden" id="radiusUnitsRow">
+            <label for="radiusUnits">Radius Units</label>
+            <select id="radiusUnits">
+            <option value="m" >meters (m)</option>
+            <option value="km" selected>kilometers (km)</option>
+            <option value="AU">astronomical units (AU)</option>
+            <option value="ls">light‑seconds (ls)</option>
+            <option value="Rsun">solar radii (R☉)</option>
+            <option value="ly">light‑years (ly)</option>
+            </select>
+        </div>
+        <div class="span-12 row" style="justify-content: space-between;">
+            <div class="status" id="status">Loading Python…</div>
+            <div class="row">
+            <button id="runBtn" disabled>Compute</button>
+            </div>
+        </div>
+        </div>
+
+      <hr />
+        <div class="span-12 options">
+        <div class="control">
+            <label for="outMassUnits">Output Mass Units</label>
+            <select id="outMassUnits">
+            <option value="kg" selected>Kilograms (kg)</option>
+            <option value="lb">Pounds (lb)</option>
+            <option value="Msun">Solar masses (M☉)</option>
+            <option value="Mearth">Earth masses (M⊕)</option>
+            <option value="tonUS">US tons (short ton)</option>
+            <option value="tonne">Metric tons (tonne)</option>
+            </select>
+        </div>
+        <div class="control">
+            <label for="outTempUnits">Output Temperature Units</label>
+            <select id="outTempUnits">
+            <option value="K" selected>Kelvin (K)</option>
+            <option value="C">Celsius (°C)</option>
+            <option value="F">Fahrenheit (°F)</option>
+            </select>
+        </div>
+        <div class="control">
+            <label for="outRadiusUnits">Output Radius Units</label>
+            <select id="outRadiusUnits">
+            <option value="m" >meters (m)</option>
+            <option value="km"selected>kilometers (km)</option>
+            <option value="AU">astronomical units (AU)</option>
+            <option value="ls">light‑seconds (ls)</option>
+            <option value="Rsun">solar radii (R☉)</option>
+            <option value="ly">light‑years (ly)</option>
+            </select>
+        </div>
+        <div class="control">
+            <label for="outTimeUnits">Output Time Units</label>
+            <select id="outTimeUnits">
+            <option value="s">seconds (s)</option>
+            <option value="yr" selected>years (yr)</option>
+            <option value="Myr">megayears (Myr)</option>
+            <option value="Gyr">gigayears (Gyr)</option>
+            </select>
+        </div>
+        <div class="control">
+            <label for="precision">Precision (decimals)</label>
+            <input id="precision" type="number" min="1" max="12" value="2" />
+        </div>
+        <div class="control">
+            <label>
+            <input type="checkbox" id="useSpecies" checked />
+            Species thresholds (g_eff(T))
+            </label>
+        </div>
+        </div>
+
+        <div class="span-12">
+        <h2>Results</h2>
+        <div id="results" class="mono">—</div>
+        <h2 style="margin-top:10px;">Species Timeline</h2>
+    <div id="species" class="mono" style="font-size:14px; opacity:.95;">—</div>
+
+        </div>
+    </div>
+  </div>
+
+<script>
+    const elStatus = document.getElementById('status');
+    const elRun = document.getElementById('runBtn');
+    const elInputType = document.getElementById('inputType');
+    const elMass = document.getElementById('mass');
+    const elUnits = document.getElementById('units');
+    const elRadius = document.getElementById('radius');
+    const elRadiusUnits = document.getElementById('radiusUnits');
+    const massRow = document.getElementById('massRow');
+    const massUnitsRow = document.getElementById('massUnitsRow');
+    const radiusRow = document.getElementById('radiusRow');
+    const radiusUnitsRow = document.getElementById('radiusUnitsRow');
+
+    const elOutMassUnits = document.getElementById('outMassUnits');
+    const elOutTempUnits = document.getElementById('outTempUnits');
+    const elOutRadiusUnits = document.getElementById('outRadiusUnits');
+    const elOutTimeUnits = document.getElementById('outTimeUnits');
+    const elPrecision = document.getElementById('precision');
+    const elUseSpecies = document.getElementById('useSpecies');
+    const elResults = document.getElementById('results');
+
+    function toggleInputMode(){
+        const byRadius = elInputType.value === 'radius';
+        massRow.classList.toggle('hidden', byRadius);
+        massUnitsRow.classList.toggle('hidden', byRadius);
+        radiusRow.classList.toggle('hidden', !byRadius);
+        radiusUnitsRow.classList.toggle('hidden', !byRadius);
+    }
+    toggleInputMode();
+    elInputType.addEventListener('change', toggleInputMode);
+
+    // --- Numbers
+    const KG_TO_LB = 2.20462262185;
+    const LB_TO_KG = 0.45359237;
+    const TON_US_TO_KG = 907.18474;
+    const TONNE_TO_KG = 1000.0;
+    const PHY = { G:6.67430e-11, c:299_792_458.0, M_sun:1.988_47e30, M_earth:5.9722e24, R_SUN_M:6.957e8, LY_M:9.4607304725808e15, AU_M:1.495978707e11, LS_M:299_792_458.0 };
+
+    function fmtSci(x){
+        const p = Math.max(0, Math.min(12, parseInt(elPrecision.value)||2));
+        if (!isFinite(x)) return String(x);
+        if (x === 0) return `0 × 10^0`;
+        const sign = x < 0 ? '-' : '';
+        const ax = Math.abs(x);
+        const exp = Math.floor(Math.log10(ax));
+        const mant = ax / Math.pow(10, exp);
+        return `${sign}${mant.toFixed(p)} × 10^${exp}`;
+    }
+
+  function convertMass(kg){
+    if (elOutMassUnits.value === 'lb') return kg*KG_TO_LB;
+    if (elOutMassUnits.value === 'Msun') return kg/PHY.M_sun;
+    if (elOutMassUnits.value === 'Mearth') return kg/PHY.M_earth;
+    if (elOutMassUnits.value === 'tonUS') return kg/TON_US_TO_KG;
+    if (elOutMassUnits.value === 'tonne') return kg/TONNE_TO_KG;
+    return kg;
+  }
+  function convertTemp(K){
+    if (elOutTempUnits.value==='C') return K-273.15;
+    if (elOutTempUnits.value==='F') return (K-273.15)*9/5+32;
+    return K;
+  }
+  function convertRadiusOut(m){
+    const unit = elOutRadiusUnits.value;
+    if (unit==='km') return { val: m/1000.0, label: 'km' };
+    if (unit==='AU') return { val: m/PHY.AU_M, label: 'AU' };
+    if (unit==='ls') return { val: m/PHY.LS_M, label: 'ls' };
+    if (unit==='Rsun') return { val: m/PHY.R_SUN_M, label: 'R☉' };
+    if (unit==='ly') return { val: m/PHY.LY_M, label: 'ly' };
+    return { val: m, label: 'm' };
+  }
+  function convertTime(years){
+    const u = elOutTimeUnits.value;
+    if (u==='s') return { val: years * PHYJS.SEC_PER_YEAR, label: 's' };
+    if (u==='Myr') return { val: years / 1e6, label: 'Myr' };
+    if (u==='Gyr') return { val: years / 1e9, label: 'Gyr' };
+    return { val: years, label: 'years' };
+  }
+
+  // Primordial preset UX: (you said you want it this way, so I’m leaving it exactly as-is)
+  function handleUnitsPreset(){
+    // if (elUnits.value === 'primordial'){ elMass.value = '1e11'; elMass.disabled = true; }
+    // else {
+      elMass.disabled = false;
+    // }
+  }
+  handleUnitsPreset();
+  elUnits.addEventListener('change', handleUnitsPreset);
+
+  // --- Species thresholds model (toy) for JS
+  const KELVIN_TO_eV = 8.617333262e-5;
+  const G_BASE = 0.0;  // we now include photons & gravitons explicitly
+
+const SPECIES = [
+  // Massless / nearly massless
+  { name: "γ (photons)",      E_th_eV: 0.0,        w: 0.60 },
+  { name: "g (gravitons)",    E_th_eV: 0.0,        w: 0.02 },
+  { name: "ν (3 flavors)",    E_th_eV: 0.05,       w: 1.50 }, // ~0.5 per flavor (Dirac/Majorana details ignored)
+
+  // Leptons
+  { name: "e±",               E_th_eV: 0.511e6,    w: 0.9  },
+  { name: "μ±",               E_th_eV: 105.66e6,   w: 0.9  },
+
+  // “Hadronic” proxy (very compact stand-in for QCD onset)
+  // More realistic would turn on quarks/gluons near Λ_QCD (~200 MeV) + hadronization.
+  { name: "π (proxy for light hadrons)", E_th_eV: 135.0e6, w: 2.5 },
+  { name: "p (baryon proxy)",            E_th_eV: 938.27e6, w: 1.5 },
+
+  // Electroweak heavy bosons / Higgs
+  { name: "W/Z (summed)",     E_th_eV: 80.4e9,     w: 6.0  },
+  { name: "H",                E_th_eV: 125.1e9,    w: 1.0  },
+
+  // Top quark proxy (others will already be on by then)
+  { name: "top",              E_th_eV: 173.0e9,    w: 2.0  },
+];
+
+  // --- Pyodide loader (two CDNs + timeout)
+  let pyodideReadyPromise = (async ()=>{
+    const CANDIDATES=[
+      { base:'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/', script:'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js' },
+      { base:'https://cdn.jsdelivr.net/npm/pyodide@0.24.1/full/', script:'https://cdn.jsdelivr.net/npm/pyodide@0.24.1/full/pyodide.js' }
+    ];
+    let lastErr=null;
+    for (const cand of CANDIDATES){
+      try{
+        elStatus.textContent=`Loading Python from ${new URL(cand.base).host}…`;
+        await new Promise((res,rej)=>{const s=document.createElement('script');s.src=cand.script; s.async=true; s.crossOrigin='anonymous'; s.onload=()=>res(); s.onerror=()=>rej(new Error('Failed to load pyodide.js')); document.head.appendChild(s);});
+        const init=new Promise((res,rej)=>{const to=setTimeout(()=>rej(new Error('Pyodide init timeout')),25000); loadPyodide({indexURL:cand.base}).then(py=>{clearTimeout(to);res(py);}).catch(rej)});
+        const py=await init;
+        const pyCode=`
+import math, json
+G    = 6.67430e-11
+c    = 299_792_458.0
+hbar = 1.054_571_817e-34
+k_B  = 1.380_649e-23
+T0_CMB   = 2.7255
+H0_km_s_Mpc = 67.4
+Omega_L  = 0.685
+MPC_IN_M = 3.085_677_581_491_367e22
+H0 = H0_km_s_Mpc * 1_000.0 / MPC_IN_M
+H_L = H0 * (Omega_L ** 0.5)
+M_sun = 1.988_47e30
+SEC_PER_YEAR = 365.2425 * 24 * 3600.0
+
+def hawking_temperature(M_kg: float) -> float:
+    return (hbar * c**3) / (8.0 * math.pi * G * M_kg * k_B)
+
+_C = 5120.0 * math.pi * (G**2) / (hbar * (c**4))
+
+def evaporation_time(M_kg: float) -> float:
+    return _C * (M_kg**3)
+
+def time_until_cmb_cool_below(T_H: float, T0: float = T0_CMB, H_Lambda: float = H_L) -> float:
+    if T_H >= T0:
+        return 0.0
+    return (1.0 / H_Lambda) * math.log(T0 / T_H)
+
+def de_sitter_temperature(H_Lambda: float = H_L) -> float:
+    return (hbar * H_Lambda) / (2.0 * math.pi * k_B)
+
+# --- Species thresholds (toy g_eff)
+KELVIN_TO_eV = 8.617333262e-5
+SPECIES = [
+    {"name":"e±",  "E_th_eV": 0.511e6,  "w": 2.0},
+    {"name":"μ±",  "E_th_eV": 105.66e6, "w": 2.0},
+    {"name":"π",   "E_th_eV": 135.0e6,  "w": 3.0},
+    {"name":"p",   "E_th_eV": 938.27e6, "w": 2.0},
+    {"name":"W/Z", "E_th_eV": 80.4e9,   "w": 6.0},
+    {"name":"H",   "E_th_eV": 125.1e9,  "w": 1.0},
+    {"name":"top", "E_th_eV": 173.0e9,  "w": 2.0},
+]
+G_BASE = 1.0
+
+def T_H(M_kg: float) -> float:
+    return (hbar * c**3) / (8.0 * math.pi * G * M_kg * k_B)
+
+def g_eff_of_T(T_K: float) -> float:
+    E_eV = T_K * KELVIN_TO_eV
+    g = G_BASE
+    for s in SPECIES:
+        if E_eV >= s["E_th_eV"]:
+            g += s["w"]
+    return g
+
+def evap_time_years_piecewise(M0_kg: float) -> float:
+    alpha0 = hbar * c**4 / (15360.0 * math.pi * G**2)
+    M = M0_kg
+    t_s = 0.0
+    M_min = 1e3
+    while M > M_min:
+        T = T_H(M)
+        g = g_eff_of_T(T)
+        dMdt = - (alpha0 * g) / (M*M)
+        dt = 0.001 * M / max(1e-99, abs(dMdt))
+        M += dMdt * dt
+        t_s += dt
+        if not math.isfinite(t_s) or t_s > 1e300:
+            break
+    return t_s / SEC_PER_YEAR
+
+def timeline_with_species(M_kg: float, use_species: bool):
+    T = T_H(M_kg)
+    t_cool = time_until_cmb_cool_below(T)
+    Tds = de_sitter_temperature()
+    if use_species:
+        t_evap_years = evap_time_years_piecewise(M_kg)
+    else:
+        t_evap_years = evaporation_time(M_kg) / SEC_PER_YEAR
+    return {
+        "M_kg": M_kg,
+        "T_H_K": T,
+        "T_dS_K": Tds,
+        "t_cool_years": t_cool / SEC_PER_YEAR,
+        "t_evap_years": t_evap_years,
+        "t_total_years": t_cool/SEC_PER_YEAR + t_evap_years,
+    }
+
+def timeline(M_kg: float):
+    # keep original for compatibility (no species)
+    T_H0 = hawking_temperature(M_kg)
+    t_cool = time_until_cmb_cool_below(T_H0)
+    t_evap = evaporation_time(M_kg)
+    T_dS  = de_sitter_temperature()
+    return {
+        "M_kg": M_kg,
+        "T_H_K": T_H0,
+        "T_dS_K": T_dS,
+        "t_cool_years": t_cool / SEC_PER_YEAR,
+        "t_evap_years": t_evap / SEC_PER_YEAR,
+        "t_total_years": (t_cool + t_evap) / SEC_PER_YEAR,
+    }
+`;
+        await py.runPythonAsync(pyCode);
+        return py;
+      }catch(e){ lastErr=e; console.warn('Pyodide load failed:', e); }
+    }
+    throw lastErr || new Error('Unable to load Pyodide');
+  })();
+
+  (async()=>{ try{ await pyodideReadyPromise; elStatus.textContent='Python ready.'; elRun.disabled=false; } catch(e){ elStatus.textContent='Python failed to load — JS fallback active.'; elRun.disabled=false; }})();
+
+  window.__lastRes=null;
+
+  // --- JS physics fallback (matches Python)
+  const PHYJS = {
+    G: 6.67430e-11, c: 299_792_458.0, hbar: 1.054_571_817e-34, k_B: 1.380_649e-23,
+    T0: 2.7255, H0_km_s_Mpc: 67.4, Omega_L: 0.685, MPC_IN_M: 3.085_677_581_491_367e22,
+    M_sun: 1.988_47e30, SEC_PER_YEAR: 365.2425*24*3600.0
+  };
+  PHYJS.H0 = PHYJS.H0_km_s_Mpc*1000/PHYJS.MPC_IN_M;
+  PHYJS.H_L = PHYJS.H0*Math.sqrt(PHYJS.Omega_L);
+  const C_LIFE = 5120*Math.PI*(PHYJS.G**2)/(PHYJS.hbar*(PHYJS.c**4));
+
+  function T_H_K(M_kg){
+    return (PHYJS.hbar*PHYJS.c**3)/(8*Math.PI*PHYJS.G*M_kg*PHYJS.k_B);
+  }
+  function gEff_of_T_JS(T_K){
+    let g = G_BASE;
+    const E_eV = T_K * KELVIN_TO_eV;
+    for (const s of SPECIES) if (E_eV >= s.E_th_eV) g += s.w;
+    return g;
+  }
+  function evap_time_years_piecewise_JS(M0_kg){
+    const alpha0 = PHYJS.hbar * PHYJS.c**4 / (15360*Math.PI*PHYJS.G**2);
+    let M = M0_kg;
+    let t_s = 0.0;
+    const M_min = 1e3;
+    while (M > M_min){
+      const T = T_H_K(M);
+      const g = gEff_of_T_JS(T);
+      const dMdt = - (alpha0 * g) / (M*M);
+      const dt = 0.001 * M / Math.max(1e-99, Math.abs(dMdt));
+      M += dMdt * dt;
+      t_s += dt;
+      if (!isFinite(t_s) || t_s > 1e300) break;
+    }
+    return t_s / PHYJS.SEC_PER_YEAR;
+  }
+
+  function integrate_with_events_JS(M0_kg){
+    const alpha0 = PHYJS.hbar * PHYJS.c**4 / (15360*Math.PI*PHYJS.G**2);
+    let M = M0_kg;
+    let t_s = 0.0;
+    const M_min = 1e3;
+    const thresholds = SPECIES.map(s => ({ name:s.name, T_th:s.E_th_eV / KELVIN_TO_eV, hit:false }));
+    const events = [];
+    while (M > M_min){
+      const T = T_H_K(M);
+      for (const th of thresholds){
+        if (!th.hit && T >= th.T_th){
+          th.hit = true;
+          events.push({ name: th.name, t_years: t_s/PHYJS.SEC_PER_YEAR, M_kg: M, T_K: T });
+        }
+      }
+      const g = gEff_of_T_JS(T);
+      const dMdt = - (alpha0 * g) / (M*M);
+      const dt = 0.001 * M / Math.max(1e-99, Math.abs(dMdt));
+      M += dMdt * dt;
+      t_s += dt;
+      if (!isFinite(t_s) || t_s > 1e300) break;
+    }
+    return { t_years: t_s/PHYJS.SEC_PER_YEAR, events };
+  }
+
+  function timelineJS_with_species(M_kg, useSpecies){
+    const T_H = T_H_K(M_kg);
+    const T_dS = (PHYJS.hbar*PHYJS.H_L)/(2*Math.PI*PHYJS.k_B);
+    const t_cool = (T_H >= PHYJS.T0) ? 0 : (1/PHYJS.H_L) * Math.log(PHYJS.T0 / T_H);
+
+    const out = integrate_with_events_JS(M_kg);
+    const t_evap_years = useSpecies ? out.t_years : (C_LIFE * M_kg**3) / PHYJS.SEC_PER_YEAR;
+
+    return {
+      M_kg,
+      T_H_K: T_H,
+      T_dS_K: T_dS,
+      t_cool_years: t_cool / PHYJS.SEC_PER_YEAR,
+      t_evap_years,
+      t_total_years: t_cool/PHYJS.SEC_PER_YEAR + t_evap_years,
+      species_events: out.events,
+    };
+  }
+
+  function timelineJS(M_kg){
+    return timelineJS_with_species(M_kg, false);
+  }
+
+  function getMassKg(){
+    const mode = elInputType.value;
+    if (mode==='radius'){
+      const rVal = parseFloat(elRadius.value);
+      if (!(rVal>0)) throw new Error('Radius must be positive.');
+      let r_m;
+      if (elRadiusUnits.value==='km') r_m=rVal*1000.0;
+      else if (elRadiusUnits.value==='AU') r_m=rVal*PHY.AU_M;
+      else if (elRadiusUnits.value==='ls') r_m=rVal*PHY.LS_M;
+      else if (elRadiusUnits.value==='Rsun') r_m=rVal*PHY.R_SUN_M;
+      else if (elRadiusUnits.value==='ly') r_m=rVal*PHY.LY_M;
+      else r_m=rVal; // meters
+      return (r_m*(PHY.c**2))/(2*PHY.G);
+    } else {
+      const massVal = parseFloat(elMass.value);
+      if (!(massVal>0)) throw new Error('Mass must be positive.');
+      if (elUnits.value==='Msun') return massVal*PHY.M_sun;
+      if (elUnits.value==='Mearth') return massVal*PHY.M_earth;
+      if (elUnits.value==='kg') return massVal;
+      if (elUnits.value==='lb') return massVal*LB_TO_KG;
+      if (elUnits.value==='tonUS') return massVal*TON_US_TO_KG;
+      if (elUnits.value==='tonne') return massVal*TONNE_TO_KG;
+      if (elUnits.value==='primordial') return massVal*1e11;
+      return massVal;
+    }
+  }
+
+  // --- Render results (also shows Schwarzschild radius)
+  function render(res){
+    const massOut = convertMass(res.M_kg);
+    const T_H = convertTemp(res.T_H_K);
+    const T_dS = convertTemp(res.T_dS_K);
+    const rs_m = (2*PHY.G*res.M_kg)/(PHY.c**2);
+    const rs_out = convertRadiusOut(rs_m);
+
+    // Species timeline 
+    const sp = document.getElementById('species');
+    if (sp){
+        if (res.species_events && res.species_events.length){
+        const header = `<tr><th>Species</th><th>BH mass at turn-on</th><th>Time from start</th></tr>`;
+        const rows = res.species_events.map(ev => {
+            const t = convertTime(ev.t_years);
+            return `<tr><td>${ev.name}</td><td>${fmtSci(convertMass(ev.M_kg))} ${elOutMassUnits.value}</td><td>${fmtSci(t.val)} ${t.label}</td></tr>`;
+        }).join('');
+        sp.innerHTML = `<table>${header}${rows}</table>`;
+      } else {
+        sp.textContent = '— (No thresholds crossed before final cutoff for this mass)';
+      }
+    }
+
+    elResults.innerHTML=`
+<table>
+  <tr><th>Mass</th><td>${fmtSci(massOut)} ${elOutMassUnits.value}</td></tr>
+  <tr><th>Schwarzschild radius R<sub>s</sub></th><td>${fmtSci(rs_out.val)} ${rs_out.label}</td></tr>
+  <tr><th>Hawking temperature T<sub>H</sub></th><td>${fmtSci(T_H)} ${elOutTempUnits.value}</td></tr>
+  <tr><th>de Sitter temperature T<sub>dS</sub></th><td>${fmtSci(T_dS)} ${elOutTempUnits.value}</td></tr>
+  <tr><th>Time until CMB < T<sub>H</sub></th><td>${(()=>{const t=convertTime(res.t_cool_years); return `${fmtSci(t.val)} ${t.label}`;})()}</td></tr>
+  <tr><th>Evaporation time (after)</th><td>${(()=>{const t=convertTime(res.t_evap_years); return `${fmtSci(t.val)} ${t.label}`;})()}</td></tr>
+  <tr><th>Total from now</th><td>${(()=>{const t=convertTime(res.t_total_years); return `${fmtSci(t.val)} ${t.label}`;})()}</td></tr>`;
+  }
+
+  // --- Compute button
+  async function compute(){
+    elRun.disabled=true; elStatus.textContent='Computing…';
+    try{
+        const M_kg = getMassKg();
+        let res;
+        try{
+        const py = await pyodideReadyPromise;
+        py.globals.set('M_kg', M_kg);
+        py.globals.set('useSpeciesJS', elUseSpecies.checked);
+        await py.runPythonAsync(`
+import json
+use_species = bool(useSpeciesJS)
+res = timeline_with_species(float(M_kg), use_species)
+res_json = json.dumps(res)
+`);
+        const res_json = py.globals.get('res_json');
+        res = JSON.parse(res_json);
+
+        if (!res.species_events) {
+          try {
+            const out = integrate_with_events_JS(M_kg);
+            res.species_events = out.events;
+          } catch (_) {}
+        }
+
+        elStatus.textContent='Done (Python).';
+      }catch(pyErr){
+        console.warn('Using JS fallback:', pyErr);
+        res = timelineJS_with_species(M_kg, elUseSpecies.checked);
+
+        // ADDED: keep parity if something odd happens
+        if (!res.species_events) {
+          try { const out = integrate_with_events_JS(M_kg); res.species_events = out.events; } catch (_) {}
+        }
+
+        elStatus.textContent='Done (JS fallback).';
+      }
+      window.__lastRes = res; render(res);
+    }catch(err){ console.error(err); elStatus.textContent='Error: '+err.message; }
+    finally{ elRun.disabled=false; }
+  }
+
+  elRun.addEventListener('click', compute);
+  for (const [ev, el] of [["change", elOutMassUnits],["change", elOutTempUnits],["change", elOutRadiusUnits],["change", elOutTimeUnits],["input", elPrecision],["change", elUseSpecies]]){
+    el.addEventListener(ev, ()=>{ if (window.__lastRes) render(window.__lastRes); });
+  }
+</script>
+
+</body>
+</html>
