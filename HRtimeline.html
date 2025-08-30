@@ -14,7 +14,11 @@
     background-color: var(--panel);
     color: var(--ink);
     }
-    
+    .katex { color: var(--ink); font-size: .9em; }
+    details { border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 10px 12px; margin: 10px 0; }
+    details > summary { cursor: pointer; font-weight: 600; color: var(--muted); }
+    details[open] { background: rgba(255,255,255,.04); }
+
     body { margin:0; font:16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;}
     .wrap { max-width:980px; margin:32px auto; padding:0 16px; }
     .card { background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.35); }
@@ -42,13 +46,34 @@
     .control { min-width:125px; }
     .hidden { display:none; }
   </style>
+  <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+<!-- KaTeX core -->
+<script defer
+        src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+<!-- Auto-render extension; call render on load -->
+<script defer
+        src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body,{
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '\\[', right: '\\]', display: true},
+            {left: '$',  right: '$',  display: false},
+            {left: '\\(', right: '\\)', display: false}
+          ],
+          throwOnError: false
+        });"></script>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <div>
         <h1>Hawking Radiation – Evaporation Timeline</h1>
-        <p>Compute the Hawking temperature and evaporation timeline. Runs in your browser with Python via Pyodide (and a JS fallback).</p>
+        <p>
+          This calculator estimates how long a black hole of a chosen size would take to evaporate via Hawking radiation. It shows the time it takes for the CMB to cool below that temperature, and the total lifetime. We assume the temperature floor to be absolute zero, 0 K. Details on why this is an assumption and possible values will be discussed below. A full write-up will be included later to provide rigorous  and historical context and provide sources. This serves almost like an extension of <a href="https://www.vttoth.com/CMS/physics-notes/311-hawking-radiation-calculator" style="color: var(--ink);">Viktor T. Toth's Hawking radiation calculator</a>, so check that out for other parameters on black holes.
+        </p>
       </div>
 
       <div class="grid span-12">
@@ -147,7 +172,7 @@
         <div class="control">
             <label>
             <input type="checkbox" id="useSpecies" checked />
-            Species thresholds (g_eff(T))
+            Greybody corrections
             </label>
         </div>
         </div>
@@ -155,10 +180,154 @@
         <div class="span-12">
         <h2>Results</h2>
         <div id="results" class="mono">—</div>
-        <h2 style="margin-top:10px;">Species Timeline</h2>
-    <div id="species" class="mono" style="font-size:14px; opacity:.95;">—</div>
-
+          <div id="speciesSection">
+          <h2 style="margin-top:10px;">Species Timeline</h2>
+            <div id="species" class="mono" style="font-size:14px; opacity:.95;">—</div>
+          </div>
         </div>
+        <hr>
+<div class="span-12">
+  <h2>Equations & Insights</h2>
+
+  <p>The key to understanding this information is that the black hole's temperature scales inversely with its mass. That is to say that the bigger the black hole, the colder it is. A black hole will not begin to evaporate until the background temperature of the universe, the CMB (cosmic microwave background), drops below its own temperature. The time it takes for this to happen can be incredibly long, but if you play with the values you'll notice that the evaporation time afterwards is so absurdly long that this value doesn't noticeably affect the total time. </p>
+  <ul>
+    <li><b>Hawking temperature:</b> $T_H=\dfrac{\hbar c^3}{8\pi G M k_B}$ where all values are constant, so $T_H\propto \dfrac{1}{M}$</li>
+    <li><b>Evaporation (leading order):</b> $t_{\rm evap} = \dfrac{5120\pi G^2 M^3}{\hbar c^4}$ with greybody emissivity factors included as requested for optimization.</li>
+    <li><b>Cooling time:</b> Uses exact Friedmann integral until $T_{\rm CMB}(t) \lt T_H$ (included below)</li>
+    <li><b>Species thresholds:</b> new particles radiate when $k_B T_H\gtrsim m c^2$ </li>
+  </ul>
+
+  <details>
+    <summary>More equations</summary>
+    <div class="mono" style="line-height:1.6; margin-top:8px; line-gap-override: 1.1em;">
+      <b>Geometry & thermodynamics</b><br>
+      Schwarzschild radius: $r_s=\dfrac{2GM}{c^2}$, &nbsp;
+      Area: $A=4\pi r_s^2=\dfrac{16\pi G^2 M^2}{c^4}$<br>
+      Bekenstein–Hawking entropy: $S_{BH}=\dfrac{k_B c^3 A}{4G\hbar}
+      = \dfrac{4\pi k_B G}{\hbar c}\,M^2$<br><br>
+
+      <b>Hawking radiation (leading order)</b><br>
+      Temperature: $T_H=\dfrac{\hbar c^3}{8\pi G M k_B}$<br>
+      Blackbody power: $P=\sigma A T_H^4 = \dfrac{\hbar c^6}{15360\,\pi\,G^2}\,\dfrac{1}{M^2}$<br>
+      Mass loss: $\displaystyle \frac{dM}{dt}=-\frac{P}{c^2}=
+      -\,\frac{\hbar c^4}{15360\,\pi\,G^2}\,\frac{1}{M^2}$<br>
+      Lifetime (integrated): $t_{\rm evap}=\dfrac{5120\,\pi\,G^2}{\hbar c^4}\,M^3$<br><br>
+
+      <b>Exact Friedmann cooling time</b><br>
+      $$
+      \Delta t \;=\; \int_{1}^{a_{\rm cool}} \frac{da}{a\,H(a)},\quad
+      a_{\rm cool}=\frac{T_0}{T_H},\quad
+      H(a)=H_0\sqrt{\Omega_r a^{-4}+\Omega_m a^{-3}+\Omega_\Lambda}.
+      $$<br><br>
+
+
+      <b>Species-aware </b><br>
+      $\displaystyle \frac{dM}{dt}=-\,\frac{\alpha_0}{M^2}\,g_{\rm eff}(T_H)$, &nbsp;
+      $\alpha_0=\dfrac{\hbar c^4}{15360\,\pi\,G^2}$,<br>
+      thresholds: $k_B T_H\gtrsim m c^2$ turn on new species;<br>
+      (uses Page-like weights to mimic greybody factors).<br><br>
+
+      <b>Page-like weights:</b><br>
+      <table>
+  <thead>
+    <tr>
+      <th>Species</th>
+      <th style = "justify-content:center; flex-wrap:wrap;">Threshold Energy<br> $E_{\rm th}$ (eV)</th>
+      <th style = "justify-content:center; flex-wrap:wrap;">Weight<br> $w$</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>$\gamma$ (photons)</td>
+      <td>$0$</td>
+      <td>$0.60$</td>
+      <td>Massless</td>
+    </tr>
+    <tr>
+      <td>$g$ (theoretical gravitons)</td>
+      <td>$0$</td>
+      <td>$0.02$</td>
+      <td>Massless, theoretical</td>
+    </tr>
+    <tr>
+      <td>$\nu$ (neutrinos, 3 flavors)</td>
+      <td>$0.05$</td>
+      <td>$1.50$</td>
+      <td>~$0.5$ per flavor (Dirac/Majorana details ignored)</td>
+    </tr>
+    <tr>
+      <td>$e^\pm$ (electron/positron)</td>
+      <td>$5.11 \times 10^5$</td>
+      <td>$0.9$</td>
+      <td>Lepton</td>
+    </tr>
+    <tr>
+      <td>$\mu^\pm$ (muon/antimuon)</td>
+      <td>$1.0566 \times 10^8$</td>
+      <td>$0.9$</td>
+      <td>Lepton</td>
+    </tr>
+    <tr>
+      <td>$\pi$ (mesons)</td>
+      <td>$1.35 \times 10^8$</td>
+      <td>$2.5$</td>
+      <td>Proxy for Mesons</td>
+    </tr>
+    <tr>
+      <td>$p$ (baryons)</td>
+      <td>$9.3827 \times 10^8$</td>
+      <td>$1.5$</td>
+      <td>Proxy for Baryons</td>
+    </tr>
+    <tr>
+      <td>$W/Z$ (Electroweak heavy bosons)</td>
+      <td>$8.04 \times 10^{10}$</td>
+      <td>$6.0$</td>
+      <td>Electroweak bosons with mass</td>
+    </tr>
+    <tr>
+      <td>$H$ (Higgs boson)</td>
+      <td>$1.251 \times 10^{11}$</td>
+      <td>$1.0$</td>
+      <td>Higgs</td>
+    </tr>
+    <tr>
+      <td>top quark</td>
+      <td>$1.73 \times 10^{11}$</td>
+      <td>$2.0$</td>
+      <td>Top quark (other quarks already accounted for)</td>
+    </tr>
+  </tbody>
+</table>
+      
+    </div>
+  </details>
+
+  <details>
+    <summary>Why primordial black holes (PBHs) are especially interesting</summary>
+    <ul>
+      <li><b>Right temperature window:</b> PBHs with $M\!\sim\!10^{11}$–$10^{12}\,$kg have
+          $T_H$ high enough that many species radiate (electrons, neutrinos, etc.), so
+          evaporation is much more interesting. More massive black holes will be so cold that they will often only emit massless particles. At relatively high $T_H$, the emission includes not just photons
+          but also $e^\pm$, neutrinos, and (at very high $T_H$) hadronic particles.</li>
+      <li><b>Present-day evaporation threshold:</b> A BH with initial mass
+          $\sim 5\times10^{11}\,$kg would be finishing <i>now</i>; this mass scale sets many observational
+          constraints on PBHs via gamma-ray backgrounds. It should be noted that no black holes of this scale have been observed. This makes sense as they would have evaporated by now.</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>Cosmic fates: what happens in different universes?</summary>
+    <ul>
+      <li><b>Dark energy dominated (de Sitter) ($w=-1$):</b> The universe expands exponentially which eventually leads to the ambient vacuum of space reaching its minimum value of its cosmological horizon temperature $T_{dS}\approx 2.7\times 10^{-30}\,$K. This is an extremely low temperature that wouldn't change the black hole evaporation times significantly. As a fun test, go ahead and plug in values and see what size a black hole must be to reach this temperature (Hint: use light years as the input units). This temperature floor arises from a phenomena similar to the Unruh effect, where thermal effects arise from an accelerating observer in a quantum field. This has been a popular theory, but falls under scrutiny under some modern frameworks.</li>
+      <li><b>Closed universe (Big Crunch) ($w\gt -\frac{1}{3}$):</b> In the event the accelerating expansion of the universe reverses, most supermassive black holes or other smaller masses (depending when this reversal occurs), will likely still be colder than the CMB and will never evaporate. Eventually all matter will settle into another singularity and possibly explode into a new universe. This theory is not supported by current observations, but it remains as a possibility.</li>
+      <li><b>Phantom energy (Big Rip) ($w \lt -1$):</b> This theory suggests that the rate of acceleration of the universe is increasing. As a result, it could lead to the destruction of bound systems faster than black holes can evaporate. This phantom energy causes spacetime to diverge, leading to a scenario where local spacial coordinates themselves overcome the fundamental forces of physics that hold matter together (even eventually at the atomic level). This is an unlikely scenario, but it hasn't been completely ruled out.</li>
+      <li><b>Quintessence (Heat Death) ($-1 \lt w \lt-\frac{1}{3}$):</b> In this model, quintessence dominates faster than dark energy which eventually starts to decrease. This leads to a universe of maximum entropy, and the temperature asymptotically approaches absolute zero (making this our most accurate model for this calculator). Quintessence causes local spatial coordinates to become increasingly disconnected, but not at a rate where it causes it to diverge like the Big Rip. The energy density from dark energy slowly decreases from this spatial expansion, meaning there is no cosmilogical horizon as presented in the de Sitter space scenario. This theory appeals most to modern theories relating to string theory.</li>
+    </ul>
+  </details>
+</div>
+
     </div>
   </div>
 
@@ -258,24 +427,24 @@
 const SPECIES = [
   // Massless / nearly massless
   { name: "γ (photons)",      E_th_eV: 0.0,        w: 0.60 },
-  { name: "g (gravitons)",    E_th_eV: 0.0,        w: 0.02 },
-  { name: "ν (3 flavors)",    E_th_eV: 0.05,       w: 1.50 }, // ~0.5 per flavor (Dirac/Majorana details ignored)
+  { name: "g (theoretical gravitons)",    E_th_eV: 0.0,        w: 0.02 },
+  { name: "ν (neutrinos, 3 flavors)",    E_th_eV: 0.05,       w: 1.50 }, // ~0.5 per flavor (Dirac/Majorana details ignored)
 
   // Leptons
-  { name: "e±",               E_th_eV: 0.511e6,    w: 0.9  },
-  { name: "μ±",               E_th_eV: 105.66e6,   w: 0.9  },
+  { name: "e± (electron/positron)",               E_th_eV: 0.511e6,    w: 0.9  },
+  { name: "μ± (muon/antimuon)",               E_th_eV: 105.66e6,   w: 0.9  },
 
   // “Hadronic” proxy (very compact stand-in for QCD onset)
   // More realistic would turn on quarks/gluons near Λ_QCD (~200 MeV) + hadronization.
-  { name: "π (proxy for light hadrons)", E_th_eV: 135.0e6, w: 2.5 },
-  { name: "p (baryon proxy)",            E_th_eV: 938.27e6, w: 1.5 },
+  { name: "π (mesons)", E_th_eV: 135.0e6, w: 2.5 },
+  { name: "p (baryons)",            E_th_eV: 938.27e6, w: 1.5 },
 
   // Electroweak heavy bosons / Higgs
-  { name: "W/Z (summed)",     E_th_eV: 80.4e9,     w: 6.0  },
-  { name: "H",                E_th_eV: 125.1e9,    w: 1.0  },
+  { name: "W/Z (Electroweak heavy bosons)",     E_th_eV: 80.4e9,     w: 6.0  },
+  { name: "H (Higgs boson)",                E_th_eV: 125.1e9,    w: 1.0  },
 
   // Top quark proxy (others will already be on by then)
-  { name: "top",              E_th_eV: 173.0e9,    w: 2.0  },
+  { name: "top quark",              E_th_eV: 173.0e9,    w: 2.0  },
 ];
 
   // --- Pyodide loader (two CDNs + timeout)
@@ -306,6 +475,37 @@ H_L = H0 * (Omega_L ** 0.5)
 M_sun = 1.988_47e30
 SEC_PER_YEAR = 365.2425 * 24 * 3600.0
 
+Omega_m = 0.315
+Omega_r = 9.2e-5
+
+def H_of_a(a: float) -> float:
+    return H0 * math.sqrt(Omega_r*a**(-4) + Omega_m*a**(-3) + Omega_L)
+
+def time_until_cmb_cool_below_exact(T_H: float, T0: float = T0_CMB) -> float:
+    """
+    Exact Friedmann integral: Δt = ∫ da / (a H(a)) from a=1 to a_cool = T0/T_H.
+    Returns seconds.
+    """
+    a0 = 1.0
+    a1 = max(1.0, T0 / T_H)
+    if a1 <= 1.0:
+        return 0.0
+    def f(a): return 1.0 / (a * H_of_a(a))
+    # adaptive Simpson
+    def simpson(f,a,b,fa,fb,fc,S,eps,depth):
+        c = 0.5*(a+b); d = 0.5*(a+c); e = 0.5*(c+b)
+        fd = f(d); fe = f(e)
+        Sleft  = (c-a)*(fa + 4*fd + fc)/6.0
+        Sright = (b-c)*(fc + 4*fe + fb)/6.0
+        err = Sleft + Sright - S
+        if depth <= 0 or abs(err) < 15*eps:
+            return Sleft + Sright + err/15.0
+        return (simpson(f,a,c,fa,fc,fd,Sleft,  eps/2.0, depth-1) +
+                simpson(f,c,b,fc,fb,fe,Sright, eps/2.0, depth-1))
+    fa = f(a0); fb = f(a1); fc = f(0.5*(a0+a1))
+    S0 = (a1-a0)*(fa + 4*fc + fb)/6.0
+    return simpson(f,a0,a1,fa,fb,fc,S0, 1e-6/H0, 20)
+
 def hawking_temperature(M_kg: float) -> float:
     return (hbar * c**3) / (8.0 * math.pi * G * M_kg * k_B)
 
@@ -313,14 +513,6 @@ _C = 5120.0 * math.pi * (G**2) / (hbar * (c**4))
 
 def evaporation_time(M_kg: float) -> float:
     return _C * (M_kg**3)
-
-def time_until_cmb_cool_below(T_H: float, T0: float = T0_CMB, H_Lambda: float = H_L) -> float:
-    if T_H >= T0:
-        return 0.0
-    return (1.0 / H_Lambda) * math.log(T0 / T_H)
-
-def de_sitter_temperature(H_Lambda: float = H_L) -> float:
-    return (hbar * H_Lambda) / (2.0 * math.pi * k_B)
 
 # --- Species thresholds (toy g_eff)
 KELVIN_TO_eV = 8.617333262e-5
@@ -364,8 +556,7 @@ def evap_time_years_piecewise(M0_kg: float) -> float:
 
 def timeline_with_species(M_kg: float, use_species: bool):
     T = T_H(M_kg)
-    t_cool = time_until_cmb_cool_below(T)
-    Tds = de_sitter_temperature()
+    t_cool = time_until_cmb_cool_below_exact(T)
     if use_species:
         t_evap_years = evap_time_years_piecewise(M_kg)
     else:
@@ -373,7 +564,6 @@ def timeline_with_species(M_kg: float, use_species: bool):
     return {
         "M_kg": M_kg,
         "T_H_K": T,
-        "T_dS_K": Tds,
         "t_cool_years": t_cool / SEC_PER_YEAR,
         "t_evap_years": t_evap_years,
         "t_total_years": t_cool/SEC_PER_YEAR + t_evap_years,
@@ -382,13 +572,11 @@ def timeline_with_species(M_kg: float, use_species: bool):
 def timeline(M_kg: float):
     # keep original for compatibility (no species)
     T_H0 = hawking_temperature(M_kg)
-    t_cool = time_until_cmb_cool_below(T_H0)
+    t_cool = time_until_cmb_cool_below_exact(T)
     t_evap = evaporation_time(M_kg)
-    T_dS  = de_sitter_temperature()
     return {
         "M_kg": M_kg,
         "T_H_K": T_H0,
-        "T_dS_K": T_dS,
         "t_cool_years": t_cool / SEC_PER_YEAR,
         "t_evap_years": t_evap / SEC_PER_YEAR,
         "t_total_years": (t_cool + t_evap) / SEC_PER_YEAR,
@@ -414,6 +602,37 @@ def timeline(M_kg: float):
   PHYJS.H0 = PHYJS.H0_km_s_Mpc*1000/PHYJS.MPC_IN_M;
   PHYJS.H_L = PHYJS.H0*Math.sqrt(PHYJS.Omega_L);
   const C_LIFE = 5120*Math.PI*(PHYJS.G**2)/(PHYJS.hbar*(PHYJS.c**4));
+  const OM_L = 0.685;          // already used, listed here for completeness
+const OM_M = 0.315;
+const OM_R = 9.2e-5;         // photons + (nearly massless) neutrinos today
+
+function H_of_a(a){  // s^-1
+  return PHYJS.H0 * Math.sqrt(OM_R*a**(-4) + OM_M*a**(-3) + OM_L);
+}
+
+// Adaptive Simpson to integrate dt = da / (a H(a)) from a=1 to a_cool
+function tCoolExact_seconds(T_H){ // returns seconds
+  const a0 = 1.0;
+  const a1 = Math.max(1.0, PHYJS.T0 / T_H); // T ~ 1/a
+  if (a1 <= 1.0) return 0;
+  const f = (a) => 1.0/(a*H_of_a(a));
+
+  function simpson(f,a,b,fa,fb,fc,S,eps,depth){
+    const c=(a+b)/2, d=(a+c)/2, e=(c+b)/2;
+    const fd=f(d), fe=f(e);
+    const Sleft  = (c-a)*(fa + 4*fd + fc)/6;
+    const Sright = (b-c)*(fc + 4*fe + fb)/6;
+    const err = Sleft + Sright - S;
+    if (depth<=0 || Math.abs(err) < 15*eps) return Sleft + Sright + err/15;
+    return simpson(f,a,c,fa,fc,fd,Sleft, eps/2, depth-1)
+         + simpson(f,c,b,fc,fb,fe,Sright,eps/2, depth-1);
+  }
+
+  const fa=f(a0), fb=f(a1), fc=f((a0+a1)/2);
+  const S0=(a1-a0)*(fa+4*fc+fb)/6;
+  // Tight tolerance scaled to H0
+  return simpson(f,a0,a1,fa,fb,fc,S0, 1e-6/PHYJS.H0, 20);
+}
 
   function T_H_K(M_kg){
     return (PHYJS.hbar*PHYJS.c**3)/(8*Math.PI*PHYJS.G*M_kg*PHYJS.k_B);
@@ -468,7 +687,6 @@ def timeline(M_kg: float):
 
   function timelineJS_with_species(M_kg, useSpecies){
     const T_H = T_H_K(M_kg);
-    const T_dS = (PHYJS.hbar*PHYJS.H_L)/(2*Math.PI*PHYJS.k_B);
     const t_cool = (T_H >= PHYJS.T0) ? 0 : (1/PHYJS.H_L) * Math.log(PHYJS.T0 / T_H);
 
     const out = integrate_with_events_JS(M_kg);
@@ -477,7 +695,6 @@ def timeline(M_kg: float):
     return {
       M_kg,
       T_H_K: T_H,
-      T_dS_K: T_dS,
       t_cool_years: t_cool / PHYJS.SEC_PER_YEAR,
       t_evap_years,
       t_total_years: t_cool/PHYJS.SEC_PER_YEAR + t_evap_years,
@@ -520,7 +737,6 @@ def timeline(M_kg: float):
   function render(res){
     const massOut = convertMass(res.M_kg);
     const T_H = convertTemp(res.T_H_K);
-    const T_dS = convertTemp(res.T_dS_K);
     const rs_m = (2*PHY.G*res.M_kg)/(PHY.c**2);
     const rs_out = convertRadiusOut(rs_m);
 
@@ -544,7 +760,6 @@ def timeline(M_kg: float):
   <tr><th>Mass</th><td>${fmtSci(massOut)} ${elOutMassUnits.value}</td></tr>
   <tr><th>Schwarzschild radius R<sub>s</sub></th><td>${fmtSci(rs_out.val)} ${rs_out.label}</td></tr>
   <tr><th>Hawking temperature T<sub>H</sub></th><td>${fmtSci(T_H)} ${elOutTempUnits.value}</td></tr>
-  <tr><th>de Sitter temperature T<sub>dS</sub></th><td>${fmtSci(T_dS)} ${elOutTempUnits.value}</td></tr>
   <tr><th>Time until CMB < T<sub>H</sub></th><td>${(()=>{const t=convertTime(res.t_cool_years); return `${fmtSci(t.val)} ${t.label}`;})()}</td></tr>
   <tr><th>Evaporation time (after)</th><td>${(()=>{const t=convertTime(res.t_evap_years); return `${fmtSci(t.val)} ${t.label}`;})()}</td></tr>
   <tr><th>Total from now</th><td>${(()=>{const t=convertTime(res.t_total_years); return `${fmtSci(t.val)} ${t.label}`;})()}</td></tr>`;
