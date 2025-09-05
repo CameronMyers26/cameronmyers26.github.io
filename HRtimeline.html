@@ -124,8 +124,9 @@
         </div>
         </div>
 
-      <hr />
+      <hr /><b>Output unit conversions and precision: <br /></b>
         <div class="span-12 options">
+          
         <div class="control">
             <label for="outMassUnits">Output Mass Units</label>
             <select id="outMassUnits">
@@ -192,9 +193,9 @@
   <p>The key to understanding this information is that the black hole's temperature scales inversely with its mass. That is to say that the bigger the black hole, the colder it is. A black hole will not begin to evaporate until the background temperature of the universe, the CMB (cosmic microwave background), drops below its own temperature. The time it takes for this to happen can be incredibly long, but if you play with the values you'll notice that the evaporation time afterwards is so absurdly long that this value doesn't noticeably affect the total time. </p>
   <ul>
     <li><b>Hawking temperature:</b> $T_H=\dfrac{\hbar c^3}{8\pi G M k_B}$ where all values are constant, so $T_H\propto \dfrac{1}{M}$</li>
-    <li><b>Evaporation (leading order):</b> $t_{\rm evap} = \dfrac{5120\pi G^2 M^3}{\hbar c^4}$ with greybody emissivity factors included as requested for optimization.</li>
+    <li><b>Evaporation (leading order):</b> $t_{\rm evap} = \dfrac{5120\pi G^2 M^3}{\hbar c^4}$ with greybody emissivity factors for more accurate results if box is checked (equations below).</li>
     <li><b>Cooling time:</b> Uses exact Friedmann integral until $T_{\rm CMB}(t) \lt T_H$ (included below)</li>
-    <li><b>Species thresholds:</b> new particles radiate when $k_B T_H\gtrsim m c^2$ </li>
+    <li><b>Species thresholds:</b> new particles radiate when $k_B T_H\gtrsim m c^2$ where $k_B = 1.38 \times 10^{-23} \, \text{J/K}$</li>
   </ul>
 
   <details>
@@ -221,7 +222,7 @@
       $$<br><br>
 
 
-      <b>Species-aware </b><br>
+      <b>Species timeline</b><br>
       $\displaystyle \frac{dM}{dt}=-\,\frac{\alpha_0}{M^2}\,g_{\rm eff}(T_H)$, &nbsp;
       $\alpha_0=\dfrac{\hbar c^4}{15360\,\pi\,G^2}$,<br>
       thresholds: $k_B T_H\gtrsim m c^2$ turn on new species;<br>
@@ -248,37 +249,37 @@
       <td>$g$ (theoretical gravitons)</td>
       <td>$0$</td>
       <td>$0.02$</td>
-      <td>Massless, theoretical</td>
+      <td>Massless gravity mediating particle</td>
     </tr>
     <tr>
       <td>$\nu$ (neutrinos, 3 flavors)</td>
       <td>$0.05$</td>
       <td>$1.50$</td>
-      <td>~$0.5$ per flavor (Dirac/Majorana details ignored)</td>
+      <td>~$0.5$ per flavor (generalized)</td>
     </tr>
     <tr>
       <td>$e^\pm$ (electron/positron)</td>
       <td>$5.11 \times 10^5$</td>
       <td>$0.9$</td>
-      <td>Lepton</td>
+      <td>Light leptons</td>
     </tr>
     <tr>
       <td>$\mu^\pm$ (muon/antimuon)</td>
       <td>$1.0566 \times 10^8$</td>
       <td>$0.9$</td>
-      <td>Lepton</td>
+      <td>Heavy leptons</td>
     </tr>
     <tr>
-      <td>$\pi$ (mesons)</td>
+      <td>Mesons</td>
       <td>$1.35 \times 10^8$</td>
       <td>$2.5$</td>
-      <td>Proxy for Mesons</td>
+      <td>i.e pions, kaons</td>
     </tr>
     <tr>
-      <td>$p$ (baryons)</td>
+      <td>Baryons</td>
       <td>$9.3827 \times 10^8$</td>
       <td>$1.5$</td>
-      <td>Proxy for Baryons</td>
+      <td>i.e protons, neutrons</td>
     </tr>
     <tr>
       <td>$W/Z$ (Electroweak heavy bosons)</td>
@@ -290,13 +291,13 @@
       <td>$H$ (Higgs boson)</td>
       <td>$1.251 \times 10^{11}$</td>
       <td>$1.0$</td>
-      <td>Higgs</td>
+      <td>Higgs mediating particle</td>
     </tr>
     <tr>
-      <td>top quark</td>
+      <td>Top quark</td>
       <td>$1.73 \times 10^{11}$</td>
       <td>$2.0$</td>
-      <td>Top quark (other quarks already accounted for)</td>
+      <td>The most massive fundamental particle</td>
     </tr>
   </tbody>
 </table>
@@ -305,25 +306,46 @@
   </details>
 
   <details>
-    <summary>Why primordial black holes (PBHs) are especially interesting</summary>
+    <summary>What are greybodies and why are Primordial Black Holes (PBHs) interesting?</summary>
     <ul>
-      <li><b>Right temperature window:</b> PBHs with $M\!\sim\!10^{11}$–$10^{12}\,$kg have
-          $T_H$ high enough that many species radiate (electrons, neutrinos, etc.), so
+      <li><p style="margin-top:8px;">
+  <b>Note on greybody factors:</b>  
+  In reality, black holes do not radiate as perfect blackbodies. Particles emitted near the horizon
+  must tunnel through a spacetime “potential barrier,” so their escape probabilities depend on
+  spin and frequency. This modifies the emission into a
+  <i>greybody</i> spectrum.  
+  In this calculator, the <i>Greybody corrections</i> option includes <b>approximate</b> greybody
+  efficiency weights (based on Don Page’s 1976 results). For example:
+</p>
+<ul style="margin-top:0;">
+  <li>Photons are weighted at ~0.6 instead of 2 (barrier suppression)</li>
+  <li>Neutrinos ~0.5 per flavor (~1.5 total for three flavors)</li>
+  <li>Gravitons contribute only ~0.02 (very weak leakage)</li>
+  <li>Electrons, muons, and heavy species turn on once $k_B T_H$ exceeds their rest mass</li>
+</ul>
+<p>
+  These weights capture the main greybody effects without doing the full frequency-dependent
+  integration, so results are more realistic than the pure $M^3$ blackbody law, but are still estimates. The true emmisivity values depend on exact wave-equation solutions, which requires a much more sophisticated program such as <a href="https://blackhawk.hepforge.org/" style="color: var(--ink);">BlackHawk</a>.
+</p></li>
+      <b>Why PBHs are especially interesting:</b>
+        <li>PBHs with $M\!\sim\!10^{11}$–$10^{12}\,$kg have
+          $T_H$ high enough that massive particles radiate (electrons, neutrinos, etc.), so
           evaporation is much more interesting. More massive black holes will be so cold that they will often only emit massless particles. At relatively high $T_H$, the emission includes not just photons
-          but also $e^\pm$, neutrinos, and (at very high $T_H$) hadronic particles.</li>
-      <li><b>Present-day evaporation threshold:</b> A BH with initial mass
-          $\sim 5\times10^{11}\,$kg would be finishing <i>now</i>; this mass scale sets many observational
-          constraints on PBHs via gamma-ray backgrounds. It should be noted that no black holes of this scale have been observed. This makes sense as they would have evaporated by now.</li>
+          but also $e^\pm$, neutrinos, and (at very high $T_H$) hadronic particles.
+      <li> A BH with initial mass $\sim 5\times10^{11}\,$kg would be finishing <i>now</i>. This mass scale sets many observational
+          constraints on PBHs gamma-ray emissions. It should be noted that no black holes of this scale have been observed.</li>
     </ul>
   </details>
 
   <details>
-    <summary>Cosmic fates: what happens in different universes?</summary>
+    <summary>What is the eventual fate of black holes in different universes?</summary>
+    <p>In cosmology, each component of the universe (radiation, matter, dark energy) is modeled as a perfect fluid with pressure $p$ and energy density $\rho$. Their relation is written as: $$p = w \rho
+c^2$$ where $w$ is the equation-of-state parameter.</p>
     <ul>
       <li><b>Dark energy dominated (de Sitter) ($w=-1$):</b> The universe expands exponentially which eventually leads to the ambient vacuum of space reaching its minimum value of its cosmological horizon temperature $T_{dS}\approx 2.7\times 10^{-30}\,$K. This is an extremely low temperature that wouldn't change the black hole evaporation times significantly. As a fun test, go ahead and plug in values and see what size a black hole must be to reach this temperature (Hint: use light years as the input units). This temperature floor arises from a phenomena similar to the Unruh effect, where thermal effects arise from an accelerating observer in a quantum field. This has been a popular theory, but falls under scrutiny under some modern frameworks.</li>
       <li><b>Closed universe (Big Crunch) ($w\gt -\frac{1}{3}$):</b> In the event the accelerating expansion of the universe reverses, most supermassive black holes or other smaller masses (depending when this reversal occurs), will likely still be colder than the CMB and will never evaporate. Eventually all matter will settle into another singularity and possibly explode into a new universe. This theory is not supported by current observations, but it remains as a possibility.</li>
       <li><b>Phantom energy (Big Rip) ($w \lt -1$):</b> This theory suggests that the rate of acceleration of the universe is increasing. As a result, it could lead to the destruction of bound systems faster than black holes can evaporate. This phantom energy causes spacetime to diverge, leading to a scenario where local spacial coordinates themselves overcome the fundamental forces of physics that hold matter together (even eventually at the atomic level). This is an unlikely scenario, but it hasn't been completely ruled out.</li>
-      <li><b>Quintessence (Heat Death) ($-1 \lt w \lt-\frac{1}{3}$):</b> In this model, quintessence dominates faster than dark energy which eventually starts to decrease. This leads to a universe of maximum entropy, and the temperature asymptotically approaches absolute zero (making this our most accurate model for this calculator). Quintessence causes local spatial coordinates to become increasingly disconnected, but not at a rate where it causes it to diverge like the Big Rip. The energy density from dark energy slowly decreases from this spatial expansion, meaning there is no cosmilogical horizon as presented in the de Sitter space scenario. This theory appeals most to modern theories relating to string theory.</li>
+      <li><b>Quintessence (Heat Death) ($-1 \lt w \lt-\frac{1}{3}$):</b> In this model, quintessence dominates faster than dark energy which eventually starts to decrease. This leads to a universe of maximum entropy, and the temperature asymptotically approaches absolute zero (making this our most accurate model for this calculator). Quintessence causes local spatial coordinates to become increasingly disconnected, but not at a rate where it causes it to diverge like the Big Rip. The energy density from dark energy slowly decreases from this spatial expansion, meaning there is no cosmological horizon as presented in the de Sitter space scenario. This theory appeals most to modern theories relating to string theory.</li>
     </ul>
   </details>
 </div>
@@ -351,6 +373,8 @@
     const elPrecision = document.getElementById('precision');
     const elUseSpecies = document.getElementById('useSpecies');
     const elResults = document.getElementById('results');
+
+    const elSpeciesSection = document.getElementById('speciesSection');
 
     function toggleInputMode(){
         const byRadius = elInputType.value === 'radius';
@@ -516,16 +540,19 @@ def evaporation_time(M_kg: float) -> float:
 
 # --- Species thresholds (toy g_eff)
 KELVIN_TO_eV = 8.617333262e-5
+G_BASE = 0.0
 SPECIES = [
-    {"name":"e±",  "E_th_eV": 0.511e6,  "w": 2.0},
-    {"name":"μ±",  "E_th_eV": 105.66e6, "w": 2.0},
-    {"name":"π",   "E_th_eV": 135.0e6,  "w": 3.0},
-    {"name":"p",   "E_th_eV": 938.27e6, "w": 2.0},
-    {"name":"W/Z", "E_th_eV": 80.4e9,   "w": 6.0},
-    {"name":"H",   "E_th_eV": 125.1e9,  "w": 1.0},
-    {"name":"top", "E_th_eV": 173.0e9,  "w": 2.0},
+    {"name":"gamma", "E_th_eV": 0.0,      "w": 0.60},
+    {"name":"grav",  "E_th_eV": 0.0,      "w": 0.02},
+    {"name":"nu3",   "E_th_eV": 0.05,     "w": 1.50},
+    {"name":"e",     "E_th_eV": 0.511e6,  "w": 0.9},
+    {"name":"mu",    "E_th_eV": 105.66e6, "w": 0.9},
+    {"name":"pi",    "E_th_eV": 135.0e6,  "w": 2.5},
+    {"name":"p",     "E_th_eV": 938.27e6, "w": 1.5},
+    {"name":"WZ",    "E_th_eV": 80.4e9,   "w": 6.0},
+    {"name":"H",     "E_th_eV": 125.1e9,  "w": 1.0},
+    {"name":"top",   "E_th_eV": 173.0e9,  "w": 2.0},
 ]
-G_BASE = 1.0
 
 def T_H(M_kg: float) -> float:
     return (hbar * c**3) / (8.0 * math.pi * G * M_kg * k_B)
@@ -736,6 +763,7 @@ function tCoolExact_seconds(T_H){ // returns seconds
   // --- Render results (also shows Schwarzschild radius)
   function render(res){
     const massOut = convertMass(res.M_kg);
+    // elSpeciesSection.style.display = elUseSpecies.checked ? "" : "none";
     const T_H = convertTemp(res.T_H_K);
     const rs_m = (2*PHY.G*res.M_kg)/(PHY.c**2);
     const rs_out = convertRadiusOut(rs_m);
@@ -768,6 +796,8 @@ function tCoolExact_seconds(T_H){ // returns seconds
   // --- Compute button
   async function compute(){
     elRun.disabled=true; elStatus.textContent='Computing…';
+    const speciesOn = elUseSpecies.checked;
+    elSpeciesSection.style.display = speciesOn ? "" : "none";
     try{
         const M_kg = getMassKg();
         let res;
