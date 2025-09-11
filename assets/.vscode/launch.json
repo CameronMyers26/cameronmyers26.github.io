@@ -7,8 +7,8 @@
         {
             "type": "msedge",
             "request": "launch",
-            "name": "Open HRtimeline.html",
-            "file": "c:\\Users\\camer\\OneDrive\\Desktop\\cameronmyers26.github.io\\HRtimeline.html"
+            "name": "Music.html",
+            "file": "c:\\Users\\camer\\OneDrive\\Desktop\\cameronmyers26.github.io\\Music.html"
         }
     ]
 }

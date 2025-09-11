@@ -102,7 +102,7 @@
 
     @media (prefers-reduced-motion: reduce) { .poem .line { opacity: 1; transform: none; animation: none; } .shell { backdrop-filter: none; } }
 
-    .nav { position: fixed; left: 12px; top: 12px; z-index: 4; }
+    .nav { position: fixed; left: 12px; top: 12px; right: 12px; z-index: 3; display: flex; justify-content: space-between; align-items: center; gap: .75rem; }
     .pill { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .8rem; border-radius: 999px; text-decoration: none; color: var(--ink); background: rgba(255,255,255,.55); border: 1px solid color-mix(in oklab, var(--accent) 35%, transparent); backdrop-filter: blur(2px); font: 600 0.85rem ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
     .pill:hover { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -113,6 +113,7 @@
 <body>
   <nav class="nav" aria-label="Poem navigation">
     <a class="pill" href="Thorn.html" rel="prev" aria-label="Go to previous poem: Thorn">⟵ Thorn</a>
+    <a class="pill" href="MoL_trilogy.html" rel="next" aria-label="Go home" style="color: black">Home</a>
   </nav>
 
   <main class="stage" aria-label="Poem background stage">
